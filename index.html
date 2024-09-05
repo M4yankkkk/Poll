@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anonymous Polling for S5 CR</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    form {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+    }
+
+    #results {
+      background-color: #f0f0f0;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .note {
+  background-color: #fff;
+  padding: 10px;
+  margin: 20px auto;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 300px;
+}
+
+    footer {
+  background-color: #fff;
+  padding: 10px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer p {
+  margin: 0;
+  color: #555;
+}
+  </style>
+</head>
+<body>
+
+  <h1>Anonymous Polling for S5 CR</h1>
+
+  <form id="voteForm">
+    <label for="code">Enter Roll No(241CV***/241MT***):</label>
+    <input type="text" id="code" name="code" required>
+
+    <label for="option">Choose an option:</label>
+    <select id="option" name="option">
+      <option value="A">Adil</option>
+      <option value="B">Anaswara</option>
+      <option value="C">Prithviraj</option>
+    </select>
+
+    <button type="submit">Submit Vote</button>
+  </form>
+
+  <div id="results">
+    <h2>Poll Results</h2>
+    <div id="resultDisplay"></div>
+  </div>
+
+
+  <div class="note">
+    <p>Note: Your roll number will not be displayed in the results. It is used only to ensure that each person votes only once.</p>
+  </div>
+
+  <footer>
+    <p>Made With ❤️ by Mayank T</p>
+  </footer>
+
+  <script>
+    document.getElementById('voteForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const code = document.getElementById('code').value;
+      const option = document.getElementById('option').value;
+
+      fetch('https://anonymous-polling-backend-7.onrender.com/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code, vote: option })
+      }).then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        fetchResults();
+      }).catch(err => {
+        console.error(err);
+      });
+    });
+
+    function fetchResults() {
+      fetch('https://anonymous-polling-backend-7.onrender.com/results')
+        .then(response => response.json())
+        .then(data => {
+          const resultDiv = document.getElementById('resultDisplay');
+          resultDiv.innerHTML = `
+            <p>Adil: ${data.Adil} votes</p>
+            <p>Anaswara: ${data.Anaswara} votes</p>
+            <p>Prithviraj: ${data.Prithviraj} votes</p>
+          `;
+        });
+    }
+  </script>
+
+</body>
+</html>
